@@ -1,0 +1,44 @@
+<html>
+<head>
+    <title>Reglas</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+</head>
+<body ng-app="SmartSoftApp">
+    <div ng-controller="RulesController">
+        <div class="panel panel-default" ng-init="getRules()">
+            <h3>Lista de reglas creadas</h3>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Identificador</th>
+                            <th>Nombre</th>
+                            <th>Condición</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="rule in rules">
+                            <td>
+                                {{rule._id}}
+                            </td>
+                            <td>
+                                {{rule.name}}
+                            </td>
+                            <td>
+                                {{rule.condition}}
+                            </td>
+                            <td>
+                                <a href="#/rules/details/{{rule._id}}">Detalle</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../app.js"></script>
+</body>
+</html> 

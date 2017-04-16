@@ -1,0 +1,107 @@
+<html>
+<head>
+    <title>Reglas</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+
+    <link href="/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css" />
+    <script src="/jsoneditor/jsoneditor.js"></script>
+
+    <style type="text/css">
+        #jsoneditor {
+            width: 400px;
+            height: 460px;
+        }
+    </style>
+
+    <script language="javascript">
+        // create the editor
+        var container = document.getElementById('jsoneditor');
+        var options = {};
+        var editor = new JSONEditor(container, options);
+        var jsoncondition = document.getElementById('txtCondition');
+
+        var t = '';
+        for (var i in editor) {
+            t += i + ' //// ';
+        }
+
+        alert(t);
+
+        //jsoneditor event
+        editor._onChange = function () {
+            var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+
+            document.getElementById('txtCondition').value = jsonEditorValue;
+        }
+
+        //text event
+        jsoncondition.onchange = function () {
+            try {
+                var json = JSON.parse(jsoncondition.value);
+                editor.set(json);
+
+                var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+                document.getElementById('txtCondition').value = jsonEditorValue;
+
+                return false;
+            } catch (e) {
+                alert('Ha ocurrido un error al convertir el texto a formato Json. Por favor verifique la sintaxis!');
+
+                return false;
+            }
+        }
+
+        function checkRuleDataForInsertion() {
+            if (document.getElementById('txtName').value == '') {
+                alert('Por favor ingrese el nombre de la regla');
+
+                return false;
+            }
+            var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+
+            if (jsonEditorValue == '{}') {
+                alert('Por favor ingrese la condición de la regla en formato json');
+
+                return false;
+            }
+        }
+    </script>
+</head>
+<body ng-app="SmartSoftApp">
+    <div ng-controller="RulesController">
+        <form id="frmAddRule" ng-submit="addRule()">
+            <div class="panel panel-default">
+                <h3>Inserción de Reglas</h3>
+
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <td>
+                                <div class="pull-right">
+                                    Nombre: <input type="text" id="txtName" ng-model="rule.name" placeholder="Nombre de la regla"></input><br />
+                                    <textarea class="input" id="txtCondition" rows="19" cols="40" ng-model="rule.condition" placeholder="Agregar texto en formato Json"></textarea>
+                                </div>
+                            </td>
+                            <td></td>
+                            <td>
+                                <div id="jsoneditor">
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pull-right">
+                                    <button type="submit" onclick="return checkRuleDataForInsertion()" id="btnSubmit" class="btn btn-success">Insertar</button>
+                                    <br /><br />
+                                    <a href="#">Cancelar</a>
+                                    <br /><br />
+                                    <div class="pull-right"><a href="#">Página Principal</a> </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "smartsoft",
+  "version": "1.0.0",
+  "description": "Smartsoft Technical Test",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "jquery": "^3.2.1",
+    "js": "^0.1.0",
+    "mongoose": "*",
+    "node-fetch": "^1.6.3",
+    "node-rest-client": "^3.1.0",
+    "nodejs-websocket": "^1.7.1",
+    "websocket": "^1.0.24"
+  },
+  "author": "Pablo Villalobos",
+  "license": "ISC"
+}

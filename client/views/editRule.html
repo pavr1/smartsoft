@@ -1,0 +1,130 @@
+<html>
+<head>
+    <title>Reglas</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+
+    <link href="/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css" />
+    <script src="/jsoneditor/jsoneditor.js"></script>
+
+    <style type="text/css">
+        #jsoneditor {
+            width: 400px;
+            height: 460px;
+        }
+    </style>
+
+    <script>
+        // create the editor
+        var container = document.getElementById('jsoneditor');
+        var options = {};
+        var editor = new JSONEditor(container, options);
+
+        var jsoncondition = document.getElementById('txtCondition');
+
+        //jsoneditor event
+        editor._onChange = function () {
+            console.log('Event editor._onChange triggered');
+
+            var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+
+            document.getElementById('txtCondition').value = jsonEditorValue;
+        }
+
+        //text event
+        jsoncondition.onchange = function () {
+            try {
+                console.log('Event jsoncondition.onchange triggered');
+
+                var json = JSON.parse(jsoncondition.value);
+
+                editor.set(json);
+
+                var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+                document.getElementById('txtCondition').value = jsonEditorValue;
+                document.getElementById('btnSubmit').disabled = false;
+
+                return false;
+            } catch (e) {
+                alert('Ha ocurrido un error al convertir el texto a formato Json. Por favor verifique la sintaxis!');
+
+                return false;
+            }
+        }
+
+
+        jsoncondition.onclick = function () {
+            try {
+                console.log('Event jsoncondition.onclick triggered');
+
+                var json = JSON.parse(jsoncondition.value);
+
+                editor.set(json);
+
+                var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+                document.getElementById('txtCondition').value = jsonEditorValue;
+                document.getElementById('btnSubmit').disabled = false;
+
+                return false;
+            } catch (e) {
+                alert('Ha ocurrido un error al convertir el texto a formato Json. Por favor verifique la sintaxis!');
+
+                return false;
+            }
+        }
+
+        function checkRuleDataForInsertion() {
+            var jsonEditorValue = JSON.stringify(editor.get(), null, 2);
+
+            if (jsonEditorValue == '{}') {
+                alert('Por favor ingrese la condición de la regla en formato json');
+
+                return false;
+            }
+        }
+    </script>
+</head>
+<body ng-app="SmartSoftApp">
+    <div ng-controller="RulesController">
+        <form ng-submit="updateRule('{{rule._id}}')" ng-init="getRule()">
+            <div class="panel panel-default">
+                <h3>Edición de regla</h3>
+                <div class="panel-body">
+                    <h5>Identificador: [{{rule._id}}]</h5>
+                    <table class="table table-striped">
+                        <tr>
+                            <td align="right">
+                                <div>
+                                    Nombre: <input type="text" id="txtName" ng-model="rule.name" /><br />
+                                    <textarea class="input" id="txtCondition" rows="19" cols="40" placeholder="No hay datos para mostrar" ng-model="rule.condition"></textarea>
+                                </div>
+                            </td>
+                            <td>
+                                <div id="jsoneditor">
+
+                                </div>
+                            </td>
+                            <td>
+                                <div class="pull-right">
+                                    <button type="submit" onclick="return checkRuleDataForInsertion()" id="btnSubmit" class="btn btn-success" disabled>Salvar</button>
+                                    <br /><br />
+                                    <a href="#/rules/details/{{rule._id}}">Cancelar</a>
+                                    <br /><br />
+                                    <div class="pull-right"><a href="#">Página Principal</a> </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <h6>*** Click al cuadro de texto de la izquierda para cargar el control json y habilitar el botón de Salvar</h6>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../app.js"></script>
+</body>
+</html> 

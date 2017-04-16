@@ -1,0 +1,171 @@
+<html>
+<head>
+    <title>Reglas</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+
+    <link href="../jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css" />
+    <script src="../jsoneditor/jsoneditor.js"></script>
+
+    <style type="text/css">
+        #jsoneditorInput {
+            width: 400px;
+            height: 425px;
+        }
+
+        #jsoneditorOutput {
+            width: 400px;
+            height: 425px;
+        }
+    </style>
+</head>
+<body ng-app="SmartSoftApp">
+    <div ng-controller="RulesController">
+        <div class="panel panel-default" ng-init="getRules()">
+            <h3>Probar Hecho</h3>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <tr>
+                        <td align="right">
+                            <textarea class="input" id="txtCondition" rows="19" cols="40" ng-model="rule.rulecondition" placeholder="Agregar texto en formato Json"></textarea>
+                        </td>
+                        <td style="width:30px"></td>
+                        <td align="left">
+                            <div id="jsoneditorInput">
+
+                            </div>
+                        </td>
+                        <td align="left">
+                            <div id="jsoneditorOutput" disable>
+
+                            </div>
+                        </td>
+                        <td>
+                            <div class="pull-right">
+                                <button id="btnConnect" class="btn btn-success" onclick="ConnectWebSocket()">Conectar</button><br /><br />
+                                <button id="btnSend" class="btn btn-default" onclick="sendToServerViaSocket()" disabled>Enviar Json</button><br /><br />
+                                <div class="pull-right"><a href="#">Página Principal</a> </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div id="lblMessage"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../app.js"></script>
+
+    <script>
+        // create the editor
+        var containerInput = document.getElementById('jsoneditorInput');
+        var containerOutput = document.getElementById('jsoneditorOutput');
+        var options = {};
+        var editorInput = new JSONEditor(containerInput, options);
+        var editorOutput = new JSONEditor(containerOutput, options);
+        var jsoncondition = document.getElementById('txtCondition');
+
+        //jsoneditor event
+        editorInput._onChange = function () {
+            var jsonEditorValue = JSON.stringify(editorInput.get(), null, 2);
+
+            document.getElementById('txtCondition').value = jsonEditorValue;
+        }
+
+        //text event
+        jsoncondition.onchange = function () {
+            try {
+                var json = JSON.parse(jsoncondition.value);
+                editorInput.set(json);
+
+                var jsonEditorValue = JSON.stringify(editorInput.get(), null, 2);
+                document.getElementById('txtCondition').value = jsonEditorValue;
+
+                return false;
+            } catch (e) {
+                alert('Ha ocurrido un error al convertir el texto a formato Json. Por favor verifique la sintaxis!');
+
+                return false;
+            }
+        }
+
+        // set json
+        function copyConditionToJsonEditor() {
+            try {
+                var jsoncondition = document.getElementById('txtCondition');
+
+                if (jsoncondition.value == '') {
+                    document.getElementById('lblMessage').innerHTML = "El campo de condici&oacute;n no puede estar vac&iacute;o!";
+                } else {
+                    var json = JSON.parse(jsoncondition.value);
+
+                    editorInput.set(json);
+                }
+            } catch (e) {
+                alert(e);
+            }
+
+            return false;
+        };
+
+        var connection = null;
+
+        function ConnectWebSocket() {
+            if (connection == null) {
+                connection = new WebSocket('ws://localhost:8001');
+
+                document.getElementById('lblMessage').innerHTML = "Conexi&oacute;n WebSocket abierta!";
+
+                connection.onmessage = function (event) {
+                    var jsonData = JSON.parse(event.data);
+
+                    editorOutput.set(jsonData);
+
+                    document.getElementById('lblMessage').innerHTML = "Datos recibidos del servidor";
+
+                    if (connection.isOpen) {
+                        connection.close();
+
+                        document.getElementById('lblMessage').innerHTML = "Conexi&oacute;n WebSocket cerrada!";
+                    }
+                    if (connection != null) {
+                        connection = null;
+                    }
+                };
+
+                document.getElementById('btnConnect').disabled = true;
+                document.getElementById('btnSend').disabled = false;
+            }
+        }
+
+        function sendToServerViaSocket() {
+            var jsonEditorValue = JSON.stringify(editorInput.get(), null, 2);
+
+            if (jsonEditorValue == '{}') {
+                document.getElementById('lblMessage').innerHTML = "El formato Json especificado no es v&aacute;lido!";
+
+                return;
+            }
+
+            try {
+                if (connection == null) {
+                    document.getElementById('lblMessage').innerHTML = "La conexi&oacute;n WebSocket no se ha creado!";
+
+                    return;
+                }
+
+                connection.send(jsonEditorValue);
+
+                document.getElementById('btnConnect').disabled = false;
+                document.getElementById('btnSend').disabled = true;
+            } catch (e) {
+                //do nothing
+            }
+        }
+    </script>
+</body>
+</html> 

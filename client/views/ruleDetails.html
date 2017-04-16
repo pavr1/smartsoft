@@ -1,0 +1,59 @@
+<html>
+<head>
+    <title>Reglas</title>
+    <link rel="stylesheet" href="../bower_components/bootstrap/dist/css/bootstrap.css" />
+
+    <link href="/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css" />
+    <script src="/jsoneditor/jsoneditor.js"></script>
+
+    <style type="text/css">
+        #jsoneditor {
+            width: 700px;
+            height: 425px;
+        }
+    </style>
+</head>
+<body ng-app="SmartSoftApp">
+    <div ng-controller="RulesController">
+        <div class="panel panel-default" ng-init="getRule()">
+            <h3>Detalle de reglas</h3>
+            <div class="panel-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Identificador</th>
+                            <th>Nombre</th>
+                            <th>Condición</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {{rule._id}}
+                            </td>
+                            <td>
+                                {{rule.name}}
+                            </td>
+                            <td>
+                                <textarea class="input" id="txtCondition" rows="15" cols="70" placeholder="No hay datos para mostrar" ng-model="rule.condition" disabled></textarea>
+                            </td>
+                            <td>
+                                <div class="pull-right">
+                                    <a href="#/rules/edit/{{rule._id}}">Editar</a><br /><br />
+                                    <a href="#" ng-click="deleteRule(rule._id)">Eliminar</a><br /><br>
+                                    <a href="#">Página Principal</a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-route/angular-route.js"></script>
+    <script src="../app.js"></script>
+</body>
+</html> 
